@@ -17,10 +17,8 @@ resource "helm_release" "cert_manager" {
   create_namespace = true
   namespace = "cert-manager"
 
-  set = [
-    { name = "installCRDs", value = "true" },
-    { name = "serviceAccount.name", value = "cert-manager" },
-    { name = "serviceAccount.create", value = "true" }
+    values = [
+    file("${path.module}/values/cert-manager.yaml")
   ]
 
   depends_on = [aws_eks_pod_identity_association.cert_manager]
