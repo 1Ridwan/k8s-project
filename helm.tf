@@ -18,7 +18,7 @@ resource "helm_release" "cert_manager" {
   create_namespace = true
   namespace        = "cert-manager"
 
-  value = [
+  values = [
     "${file("helm-values/cert-manager.yaml")}",
   ]
 
@@ -56,7 +56,7 @@ resource "helm_release" "external_dns" {
   create_namespace = true
   namespace        = "external-dns"
 
-  value = [
+  values = [
     "${file("helm-values/external-dns.yaml")}",
   ]
 
