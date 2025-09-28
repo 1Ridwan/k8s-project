@@ -1,4 +1,6 @@
-installCRDs: true
+crds:
+  enabled: true
+
 serviceAccount:
   name: cert-manager
   create: true
