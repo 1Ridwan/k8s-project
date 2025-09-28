@@ -6,12 +6,12 @@ module "eks" {
   kubernetes_version = "1.33"
 
   addons = {
-    coredns                = {}
+    coredns = {}
     eks-pod-identity-agent = {
       before_compute = true
     }
-    kube-proxy             = {}
-    vpc-cni                = {
+    kube-proxy = {}
+    vpc-cni = {
       before_compute = true
     }
   }
@@ -41,3 +41,54 @@ module "eks" {
 
   tags = local.tags
 }
+
+
+
+
+
+module "cert_manager_pod_identity" {
+  source = "terraform-aws-modules/eks-pod-identity/aws"
+
+  name = "cert-manager"
+
+  attach_cert_manager_policy    = true
+  cert_manager_hosted_zone_arns = ["arn:aws:route53:::hostedzone/Z0717143R661NCU61KOX"]
+
+  tags = local.tags
+}
+
+resource "aws_eks_pod_identity_association" "cert_manager" {
+  cluster_name    = module.eks.cluster_name
+  namespace       = "cert-manager"
+  service_account = "cert-manager"
+  role_arn        = module.cert_manager_pod_identity.iam_role_arn
+}
+
+
+resource "kubernetes_namespace_v1" "cert_manager" {
+  metadata { name = "cert-manager" }
+}
+
+# Install cert-manager (pin a version you approve)
+resource "helm_release" "cert_manager" {
+  name             = "cert-manager"
+  namespace        = kubernetes_namespace_v1.cert_manager.metadata[0].name
+  repository       = "https://charts.jetstack.io"
+  chart            = "cert-manager"
+  version          = "v1.18.2"
+  create_namespace = false
+
+  set = [
+    { name = "installCRDs", value = "true" },
+    { name = "serviceAccount.name", value = "cert-manager" },
+    { name = "serviceAccount.create", value = "true" }
+  ]
+
+  depends_on = [aws_eks_pod_identity_association.cert_manager]
+}
+
+
+
+
+
+

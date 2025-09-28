@@ -1,5 +1,5 @@
 module "vpc" {
-  source  = "terraform-aws-modules/vpc/aws"
+  source = "terraform-aws-modules/vpc/aws"
 
   name = local.name
 
@@ -22,7 +22,7 @@ module "vpc" {
 
   private_subnet_tags = {
     "kubernetes.io/cluster/${local.name}" = "shared"
-    "kubernetes.io/role/internal-elb"    = 1
+    "kubernetes.io/role/internal-elb"     = 1
   }
 
   tags = local.tags
