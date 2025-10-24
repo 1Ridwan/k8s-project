@@ -7,3 +7,14 @@ terraform {
     use_lockfile = true #S3 native locking
   }
 }
+
+import {
+  to = aws_ecr_repository.main
+  identity = {
+    name = "k8s-ecr"
+  }
+}
+
+resource "aws_ecr_repository" "main" {
+  name = "k8s-ecr"
+}

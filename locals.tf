@@ -1,7 +1,7 @@
 locals {
-  domain          = "lab.ridwanahmed.com"
-  region          = "eu-west-2"
-  hosted_zone_arn = "arn:aws:route53:::hostedzone/Z0717143R661NCU61KOX"
+  name   = "eks-lab"
+  domain = "ridwanahmed.com"
+  region = "eu-west-2"
 
   cluster_name = "cluster-lab"
 

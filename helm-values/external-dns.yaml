@@ -1,9 +1,19 @@
+global:
+  security:
+    allowInsecureImages: true   # required by newer Bitnami charts when not using Bitnami images
+
+image:
+  registry: registry.k8s.io
+  repository: external-dns/external-dns
+  tag: v0.15.1
+
 provider: aws
-
-env:
-- name: AWS_DEFAULT_REGION
-  value: eu-west-2
-
+sources:
+  - ingress
 
 domainFilters:
-- lab.ridwanahmed.com
+  - lab.ridwanahmed.com
+
+aws:
+  zoneType: public
+  region: eu-west-2

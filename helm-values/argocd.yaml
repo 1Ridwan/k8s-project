@@ -1,0 +1,19 @@
+server:
+  extraArgs:
+    - '--insecure'
+  service:
+    type: ClusterIP
+  ingress:
+    enabled: true
+    ingressClassName: nginx
+    annotations:
+      nginx.ingress.kubernetes.io/backend-protocol: "HTTP"
+      nginx.ingress.kubernetes.io/ssl-redirect: "true"
+      nginx.ingress.kubernetes.io/hsts: "false"
+      cert-manager.io/cluster-issuer: issuer
+    hosts:
+      - argocd.app.ridwanahmed.com
+    tls:
+      - secretName: argocd-ingress-tls
+        hosts:
+          - argocd.app.ridwanahmed.com
