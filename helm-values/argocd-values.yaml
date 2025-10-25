@@ -1,0 +1,25 @@
+#repoServer:
+ # serviceAccount:
+  #  create: true
+   # name: argocd-repo-server
+  
+server:
+  url: https://argocd.lab.ridwanahmed.com
+  extraArgs:
+    - '--insecure'
+  service:
+    type: ClusterIP
+  ingress:
+    enabled: true
+    ingressClassName: nginx
+    annotations:
+      nginx.ingress.kubernetes.io/backend-protocol: "HTTP"
+      nginx.ingress.kubernetes.io/ssl-redirect: "true"
+      cert-manager.io/cluster-issuer: letsencrypt-production
+    hostname: argocd.lab.ridwanahmed.com 
+    hosts:
+      - argocd.lab.ridwanahmed.com
+    tls:
+      - hosts:
+          - argocd.lab.ridwanahmed.com
+        secretName: argocd-server-tls-7zpnr

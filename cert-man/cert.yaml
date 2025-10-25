@@ -11,3 +11,4 @@ spec:
     kind: ClusterIssuer
   dnsNames:
   - 'lab.ridwanahmed.com'
+  - 'argocd.lab.ridwanahmed.com'

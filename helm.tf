@@ -129,3 +129,43 @@ resource "aws_eks_pod_identity_association" "external_dns" {
   service_account = "external-dns"
   role_arn        = module.external_dns_pod_identity.iam_role_arn
 }
+
+## argocd
+
+resource "helm_release" "argocd" {
+  name       = "argocd"
+  repository = "https://argoproj.github.io/argo-helm"
+  chart      = "argo-cd"
+  version    = "9.0.5"
+
+  create_namespace = true
+  namespace        = "argocd"
+
+  timeout = "700"
+  force_update = true
+  reuse_values = false
+
+  values = [
+    "${file("helm-values/argocd-values.yaml")}",
+  ]
+
+}
+
+module "argocd_pod_identity" {
+  source = "terraform-aws-modules/eks-pod-identity/aws"
+
+  name = "argocd"
+
+  attach_custom_policy    = true
+  source_policy_documents = [file("eks-cluster-policy.json")]
+
+}
+
+resource "aws_eks_pod_identity_association" "argocd_repo" {
+  cluster_name    = module.eks.cluster_name
+  namespace       = "argocd"
+  service_account = "argocd-repo-server"
+  role_arn        = module.argocd_pod_identity.iam_role_arn
+
+  depends_on = [helm_release.argocd]
+}
