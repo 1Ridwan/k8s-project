@@ -23,7 +23,7 @@ spec:
         - name: myapp
           image: 241661649258.dkr.ecr.eu-west-2.amazonaws.com/k8s-ecr:latest
           ports:
-            - name: containerport
+            - name: http
               containerPort: 8080
           readinessProbe:
             httpGet: { path: "/", port: http }
@@ -46,7 +46,7 @@ spec:
   ports:
     - name: http
       port: 80
-      targetPort: containerport
+      targetPort: http       # -> containerPort 8080 by name
   type: ClusterIP
 ---
 # 4) Ingress (NGINX)
