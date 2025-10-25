@@ -14,8 +14,6 @@ resource "helm_release" "ingress_nginx" {
   timeout         = 900
 }
 
-
-
 # load balancer controller
 
 resource "helm_release" "aws_lbc" {
