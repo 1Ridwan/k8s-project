@@ -12,7 +12,7 @@ spec:
 
   source:
     path: apps
-    repoURL: 'https://github.com/1Ridwan/k8s-assignment.git'
+    repoURL: 'https://github.com/1Ridwan/k8s-project.git'
     targetRevision: HEAD
 
   syncPolicy:
