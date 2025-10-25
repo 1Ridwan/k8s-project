@@ -167,3 +167,39 @@ resource "aws_eks_pod_identity_association" "argocd_repo" {
 
   depends_on = [helm_release.argocd]
 }
+
+## Prometheus
+
+resource "helm_release" "prometheus" {
+  name       = "argocd"
+  repository = "https://prometheus-community.github.io/helm-charts"
+  chart      = "prometheus"
+  version    = "27.42.0"
+
+  create_namespace = true
+  namespace        = "prometheus"
+
+  values = [
+    "${file("helm-values/prometheus.yaml")}",
+  ]
+
+}
+
+module "amazon_managed_service_prometheus_pod_identity" {
+  source = "terraform-aws-modules/eks-pod-identity/aws"
+
+  name = "amazon-managed-service-prometheus"
+
+  attach_amazon_managed_service_prometheus_policy  = true
+  amazon_managed_service_prometheus_workspace_arns = ["arn:aws:prometheus:*:*:workspace/foo"]
+
+}
+
+resource "aws_eks_pod_identity_association" "prometheus" {
+  cluster_name    = module.eks.cluster_name
+  namespace       = "prometheus"
+  service_account = "prometheus"
+  role_arn        = module.amazon_managed_service_prometheus_pod_identity.iam_role_arn
+
+  depends_on = [helm_release.prometheus]
+}
