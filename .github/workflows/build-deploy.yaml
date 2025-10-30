@@ -1,0 +1,105 @@
+name: Build Docker Image and Deploy to Amazon ECR
+
+# triggered on push to main branch
+on:
+  push:
+    paths:
+      - 'app/**'
+
+jobs:
+  build:
+    name: Build
+    runs-on: ubuntu-latest
+    environment: production
+
+    # TODO: make these values not readable, use secrets
+    env:
+      AWS_REGION: "eu-west-2"
+      ECR_REPOSITORY: "k8s-ecr"
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v5
+
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@0e613a0980cbf65ed5b322eb7a1e075d28913a83
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: ${{ env.AWS_REGION }}
+
+      - name: Login to Amazon ECR
+        id: login-ecr
+        uses: aws-actions/amazon-ecr-login@62f4f872db3836360b72999f4b87f1ff13310f3a
+
+      - name: Build, tag, and push image to Amazon ECR
+        id: build-image
+        env:
+          ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
+          IMAGE_TAG: "latest" # ${{ github.sha }}
+        working-directory: ./app
+        run: |
+          # Build a docker container and
+          # push it to ECR so that it can
+          # be deployed to ECS.
+          docker build -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG .
+          docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
+          echo "image=$ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG" >> $GITHUB_OUTPUT
+
+
+
+    deploy:
+      needs: build  # Run deploy after build completes
+      runs-on: ubuntu-latest
+
+      steps:
+        - name: Checkout
+          uses: actions/checkout@v5
+
+        - name: Install kubectl
+          run: |
+            curl -O https://s3.us-west-2.amazonaws.com/amazon-eks/1.30.7/2024-12-12/bin/linux/amd64/kubectl
+            chmod +x ./kubectl
+            sudo mv ./kubectl /usr/local/bin/kubectl  # Download and install kubectl CLI
+
+        - name: Install ArgoCD CLI
+          run: |
+            curl -sSL -o argocd https://github.com/argoproj/argo-cd/releases/latest/download/argocd-linux-amd64
+            chmod +x argocd
+            sudo mv argocd /usr/local/bin/argocd  # Download and install ArgoCD CLI
+
+        - name: Login to ArgoCD
+          run: |
+            argocd login ${{ secrets.ARGOCD_SERVER }} \
+              --username ${{ secrets.ARGOCD_USERNAME }} \
+              --password ${{ secrets.ARGOCD_PASSWORD }} \
+              --insecure  # Authenticate to ArgoCD server
+        
+
+          # Update deployment.yaml with the new image tag
+          - name: Update deployment.yaml with newly built image
+            run: |
+              git config user.name "${{ secrets.GIT_USERNAME }}"         # Set Git username
+              git config user.email "${{ secrets.GIT_EMAIL }}"           # Set Git email
+              git fetch origin                                           # Fetch latest updates
+              git checkout main                                          # Switch to main branch
+              git pull origin main                                       # Pull latest changes
+              sed -i "s+${{ secrets.DOCKERHUB_USERNAME }}/my-app.*+${{ secrets.DOCKERHUB_USERNAME }}/my-app:${{ github.sha }}+g" manifest/deployment.yaml
+              # Replace old image tag in deployment.yaml with the new one using current commit SHA
+
+          # Commit and push the updated deployment.yaml back to GitHub
+          - name: Commit and Push Updated deployment.yaml
+            run: |
+              git config user.name "${{ secrets.GIT_USERNAME }}"         # Configure Git user again
+              git config user.email "${{ secrets.GIT_EMAIL }}"
+              git remote set-url origin https://$GIT_USERNAME:$PERSONAL_ACCESS_TOKEN@github.com/${{ github.repository }}.git
+              git fetch origin
+              git checkout main
+              git pull origin main
+              git add .                                                  # Stage all changes
+              git commit -m "Update image to my-app:${{ github.sha }}"   # Commit with message
+              git push origin main                                       # Push changes to GitHub
+
+          # Trigger ArgoCD to sync the app and deploy the new image
+          - name: Refresh ArgoCD App and Sync
+            run: argocd app sync my-app                                  # Force sync with ArgoCD to apply updated manifest

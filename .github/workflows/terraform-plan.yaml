@@ -2,6 +2,10 @@ name: Terraform Plan
 
 # wait for deploy image pipeline to complete
 on:
+  push:
+    paths:
+      - 'terraform/**'
+on:
   workflow_dispatch:
   workflow_run:
     workflows: ["Build Docker Image and Deploy to Amazon ECR and ECS"]
