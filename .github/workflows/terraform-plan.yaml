@@ -1,0 +1,98 @@
+name: Terraform Plan
+
+# wait for deploy image pipeline to complete
+on:
+  workflow_dispatch:
+  workflow_run:
+    workflows: ["Build Docker Image and Deploy to Amazon ECR and ECS"]
+    branches: [main]
+    types: [completed]
+
+jobs:
+
+  tflint:
+    runs-on: ${{ matrix.os }}
+
+    strategy:
+      matrix:
+        os: [ubuntu-latest, macos-latest, windows-latest]
+
+    steps:
+    - uses: actions/checkout@v5
+      name: Checkout source code
+
+    - uses: actions/cache@v4
+      name: Cache plugin dir
+      with:
+        path: ~/.tflint.d/plugins
+        key: ${{ matrix.os }}-tflint-${{ hashFiles('.tflint.hcl') }}
+
+    - uses: terraform-linters/setup-tflint@v5
+      name: Setup TFLint
+      with:
+        tflint_version: v0.52.0
+    - name: Show version
+      run: tflint --version
+
+    - name: Init TFLint
+      run: tflint --init
+      env:
+        # https://github.com/terraform-linters/tflint/blob/master/docs/user-guide/plugins.md#avoiding-rate-limiting
+        GITHUB_TOKEN: ${{ github.token }}
+
+    - name: Run TFLint
+      run: tflint -f compact
+
+
+  checkov:
+    runs-on: ubuntu-latest
+    
+    steps:
+      - uses: actions/checkout@v5
+      - name: Set up Python 3.8
+        uses: actions/setup-python@v4
+        with:
+          python-version: 3.8
+      - name: Test with Checkov
+        id: checkov
+        uses: bridgecrewio/checkov-action@master
+        with:
+          directory: ./terraform
+          config_file: ./terraform/.checkov.yaml
+
+          framework: terraform 
+      
+  terraformplan:
+    name: Terraform Plan
+    runs-on: ubuntu-latest
+
+    steps:
+      # Pulls latest version of code from GitHub repository
+      - name: Checkout code
+        uses: actions/checkout@v5
+
+      # Installs Terraform on the GitHub runner
+      - name: Set up Terraform
+        uses: hashicorp/setup-terraform@v3
+        with:
+          terraform_version: 1.12.2
+
+      # Configures AWS access by using the credentials stored in GitHub Secrets
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@0e613a0980cbf65ed5b322eb7a1e075d28913a83
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: "eu-west-2"
+
+      # Initialise terraform
+      - name: Initialize Terraform
+        working-directory: ./terraform
+        run: terraform init
+
+      # Execute the terraform plan
+      - name: Terraform Plan
+        working-directory: ./terraform
+        run: |
+          terraform plan -no-color -input=false
+        continue-on-error: false
