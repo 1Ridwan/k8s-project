@@ -61,7 +61,7 @@ spec:
   ingressClassName: nginx
   tls:
     - hosts: ["lab.ridwanahmed.com"]
-      secretName: nginx1-jlktt
+      secretName: shiori
   rules:
     - host: lab.ridwanahmed.com
       http:

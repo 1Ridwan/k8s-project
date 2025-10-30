@@ -56,12 +56,12 @@ metadata:
   name: myapp
   namespace: apps
   annotations:
-    cert-manager.io/cluster-issuer: letsencrypt-production
+    cert-manager.io/cluster-issuer: letsencrypt-staging
 spec:
   ingressClassName: nginx
   tls:
     - hosts: ["lab.ridwanahmed.com"]
-      secretName: nginx1-jlktt
+      secretName: nginx1
   rules:
     - host: lab.ridwanahmed.com
       http:

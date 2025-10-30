@@ -25,12 +25,15 @@ module "eks" {
   control_plane_subnet_ids = module.vpc.public_subnets
 
   eks_managed_node_groups = {
-    example = {
+    worker1 = {
       ami_type       = "AL2023_x86_64_STANDARD"
-      instance_types = ["m5.xlarge"]
+      instance_types = ["t3.large"]
+      capacity_type = "SPOT"
+      # use spot instances
+      # use t3.large
 
       min_size     = 2
-      max_size     = 10
+      max_size     = 5
       desired_size = 2
     }
   }

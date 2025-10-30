@@ -15,11 +15,11 @@ server:
     annotations:
       nginx.ingress.kubernetes.io/backend-protocol: "HTTP"
       nginx.ingress.kubernetes.io/ssl-redirect: "true"
-      cert-manager.io/cluster-issuer: letsencrypt-production
+      cert-manager.io/cluster-issuer: letsencrypt-staging
     hostname: argocd.lab.ridwanahmed.com 
     hosts:
       - argocd.lab.ridwanahmed.com
     tls:
       - hosts:
           - argocd.lab.ridwanahmed.com
-        secretName: argocd-server-tls-7zpnr
+        secretName: argocd-server-tls
