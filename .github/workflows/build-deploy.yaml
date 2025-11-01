@@ -69,10 +69,10 @@ jobs:
           sudo chmod +x /usr/local/bin/yq
 
       - name: Update deployment.yaml with newly built image
-        env:
-          NEW_IMAGE: ${{ needs.build.outputs.image }}
         run: |
           yq -i '.spec.template.spec.containers[0].image = env(NEW_IMAGE)' manifest/deployment.yaml
+
+          yq -i ".spec.template.spec.containers[0].image = \"${{ needs.build.outputs.image }}\"" manifest/deployment.yaml
 
       - name: Commit and push manifest change
         run: |
