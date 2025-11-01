@@ -1,6 +1,5 @@
 name: Terraform Plan
 
-# wait for deploy image pipeline to complete
 on:
   push:
     paths:

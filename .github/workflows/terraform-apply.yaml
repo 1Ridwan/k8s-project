@@ -3,7 +3,7 @@ name: Terraform Apply
 # dev views terraform plan workflow then manually triggers this workflow
 on:
   workflow_run:
-    workflows: ["Build Docker Image and Deploy to Amazon ECR"]
+    workflows: ["Terraform Plan"]
     branches: [main]
     types:  
       - completed

@@ -6,11 +6,17 @@ on:
     paths:
       - 'app/**'
 
+permissions:
+  contents: write  # allow pushing the updated manifest
+
 jobs:
   build:
     name: Build
     runs-on: ubuntu-latest
     environment: production
+
+    outputs:
+      image: ${{ steps.build-image.outputs.image }}
 
     # TODO: make these values not readable, use secrets
     env:
@@ -36,70 +42,40 @@ jobs:
         id: build-image
         env:
           ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
-          IMAGE_TAG: "latest" # ${{ github.sha }}
+          IMAGE_TAG: ${{ github.sha }}
         working-directory: ./app
         run: |
           # Build a docker container and
           # push it to ECR so that it can
-          # be deployed to ECS.
+          # be deployed to EKS.
           docker build -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG .
           docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
           echo "image=$ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG" >> $GITHUB_OUTPUT
 
 
 
-    deploy:
-      needs: build  # Run deploy after build completes
-      runs-on: ubuntu-latest
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
 
-      steps:
-        - name: Checkout
-          uses: actions/checkout@v5
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v5
 
-        - name: Install kubectl
-          run: |
-            curl -O https://s3.us-west-2.amazonaws.com/amazon-eks/1.30.7/2024-12-12/bin/linux/amd64/kubectl
-            chmod +x ./kubectl
-            sudo mv ./kubectl /usr/local/bin/kubectl  # Download and install kubectl CLI
+      - name: Install yq
+        run: |
+          sudo wget -qO /usr/local/bin/yq \
+            https://github.com/mikefarah/yq/releases/latest/download/yq_linux_amd64
+          sudo chmod +x /usr/local/bin/yq
 
-        - name: Install ArgoCD CLI
-          run: |
-            curl -sSL -o argocd https://github.com/argoproj/argo-cd/releases/latest/download/argocd-linux-amd64
-            chmod +x argocd
-            sudo mv argocd /usr/local/bin/argocd  # Download and install ArgoCD CLI
+      - name: Update deployment.yaml with newly built image
+        env:
+          NEW_IMAGE: ${{ needs.build.outputs.image }}
+        run: |
+          yq -i '.spec.template.spec.containers[0].image = env(NEW_IMAGE)' manifest/deployment.yaml
 
-        - name: Login to ArgoCD
-          run: |
-            argocd login ${{ secrets.ARGOCD_SERVER }} \
-              --username ${{ secrets.ARGOCD_USERNAME }} \
-              --password ${{ secrets.ARGOCD_PASSWORD }} \
-              --insecure  # Authenticate to ArgoCD server
-        
-
-          # Update deployment.yaml with the new image tag
-          - name: Update deployment.yaml with newly built image
-            run: |
-              git config user.name "${{ secrets.GIT_USERNAME }}"         # Set Git username
-              git config user.email "${{ secrets.GIT_EMAIL }}"           # Set Git email
-              git fetch origin                                           # Fetch latest updates
-              git checkout main                                          # Switch to main branch
-              git pull origin main                                       # Pull latest changes
-              sed -i "s+${{ secrets.DOCKERHUB_USERNAME }}/my-app.*+${{ secrets.DOCKERHUB_USERNAME }}/my-app:${{ github.sha }}+g" manifest/deployment.yaml
-              # Replace old image tag in deployment.yaml with the new one using current commit SHA
-
-          # Commit and push the updated deployment.yaml back to GitHub
-          - name: Commit and Push Updated deployment.yaml
-            run: |
-              git config user.name "${{ secrets.GIT_USERNAME }}"         # Configure Git user again
-              git config user.email "${{ secrets.GIT_EMAIL }}"
-              git remote set-url origin https://$GIT_USERNAME:$PERSONAL_ACCESS_TOKEN@github.com/${{ github.repository }}.git
-              git fetch origin
-              git checkout main
-              git pull origin main
-              git add .                                                  # Stage all changes
-              git commit -m "Update image to my-app:${{ github.sha }}"   # Commit with message
-              git push origin main                                       # Push changes to GitHub
-
-          # Trigger ArgoCD to sync the app and deploy the new image
-          - name: Refresh ArgoCD App and Sync
-            run: argocd app sync my-app                                  # Force sync with ArgoCD to apply updated manifest
+      - name: Commit and push manifest change
+        run: |
+          git add manifest/deployment.yaml
+          git commit -m "Update image to ${{ needs.build.outputs.image }}" || echo "No changes to commit"
+          git push
