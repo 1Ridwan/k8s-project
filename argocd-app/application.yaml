@@ -4,14 +4,19 @@ metadata:
   name: apps
   namespace: argocd
 spec:
+  project: default
+
+  source:
+    path: manifest
+    repoURL: 'https://github.com/1Ridwan/k8s-project.git'
+    targetRevision: HEAD
+
   destination:
     namespace: apps
     server: 'https://kubernetes.default.svc'
 
-  project: default
-
   source:
-    path: apps
+    path: manifest
     repoURL: 'https://github.com/1Ridwan/k8s-project.git'
     targetRevision: HEAD
 

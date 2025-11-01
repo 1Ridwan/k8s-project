@@ -17,4 +17,7 @@ import {
 
 resource "aws_ecr_repository" "main" {
   name = "k8s-ecr"
+  
+
+  force_delete = false
 }

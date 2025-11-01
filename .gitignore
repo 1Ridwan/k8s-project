@@ -38,6 +38,7 @@ terraform.rc
 
 .terraform.lock.hcl
 
+.checkov.yaml
 
 
 
