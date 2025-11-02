@@ -38,9 +38,6 @@ terraform.rc
 
 .terraform.lock.hcl
 
-.checkov.yaml
-
-
 
 
 ## app source code .gitignore
