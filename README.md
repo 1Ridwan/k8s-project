@@ -78,11 +78,16 @@ This enables **zero-downtime deployments**, **version-controlled infrastructure*
 
 ## Screenshots
 ![Website](./images/1.png)
+2048 app successfully deployed on my custom subdomain
+
 ![ArgoCD](./images/2.png)
+ArgoCD application shows all the resources created for the app deployment
+
 ![Grafana 1](./images/3.png)
-Green section represents a new pod that was automatically deployed by ArgoCD after I commited and pushed a change to GitHub
+Grafana dashboard showing CPU usage per pod in my apps namespace -> The green section represents a new pod that was automatically deployed by ArgoCD after I commited and pushed a change to GitHub
 
 ![Grafana 2](./images/4.png)
+Grafana dashboard showing CPU and Memory usage in my cluster
 
 ---
 
@@ -102,10 +107,9 @@ http://localhost:8080
 
 ## Why This Project?
 
-This project validates my ability to design, deploy, and automate production-grade cloud-native systems using AWS and Kubernetes.
+This project strengthens my ability to design, deploy, and automate production-grade cloud-native systems using AWS and Kubernetes.
 
 It demonstrates practical expertise in:
-- Containerisation and image optimisation
 - Infrastructure provisioning with Terraform
 - CI/CD automation and GitOps workflows
 - Kubernetes operations with ArgoCD and Helmfile
