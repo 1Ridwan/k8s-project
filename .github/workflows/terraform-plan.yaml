@@ -80,7 +80,7 @@ jobs:
       - name: Set up Terraform
         uses: hashicorp/setup-terraform@v3
         with:
-          terraform_version: 1.9.5
+          terraform_version: 1.14.0
 
       # Configures AWS access by using the credentials stored in GitHub Secrets
       - name: Configure AWS credentials
