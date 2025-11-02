@@ -28,7 +28,7 @@ module "eks" {
     worker1 = {
       ami_type       = "AL2023_x86_64_STANDARD"
       instance_types = ["t3.large"]
-      capacity_type = "SPOT"
+      capacity_type  = "SPOT"
       # use spot instances
       # use t3.large
 
