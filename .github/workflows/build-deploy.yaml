@@ -9,6 +9,11 @@ on:
 permissions:
   contents: write  # allow pushing the updated manifest
 
+env:
+  AWS_ACCOUNT_ID: ${{ secrets.AWS_ACCOUNT_ID }}
+  AWS_REGION: eu-west-2
+  ECR_REPOSITORY: k8s-ecr
+
 jobs:
   build:
     name: Build
