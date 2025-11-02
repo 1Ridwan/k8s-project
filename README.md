@@ -45,8 +45,8 @@ Developer → pushes code → GitHub Actions → builds image → pushes to ECR 
 - The workflow:
   1. Runs terraform linting to detect errors in terraform code.
   2. Runs **Checkov** to scan Terraform and Kubernetes manifests for security issues.  
-  3. Creates a terraform plan and saves this as a manifest file to be used in the next step.
-  4. Runs terraform apply using the exact same plan from step 3 by using the artifact
+  3. Creates a terraform plan and saves this as a artifact to be used in the next step.
+  4. Runs terraform apply using the exact same plan from step 3.
   
 ### Pipeline 2: Automated Deployment with ArgoCD
 - **Helmfile** declaratively manages all Helm charts for cluster add-ons (e.g., Nginx Ingress Controller, Cert-Manager, Prometheus, Grafana) 
