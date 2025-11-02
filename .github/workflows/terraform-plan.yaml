@@ -62,7 +62,7 @@ jobs:
         uses: bridgecrewio/checkov-action@master
         with:
           directory: ./terraform
-          config_file: .checkov.yaml
+          config_file: ./terraform/.checkov.yaml
 
           framework: terraform 
       
