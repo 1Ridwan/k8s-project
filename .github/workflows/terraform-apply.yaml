@@ -45,6 +45,8 @@ jobs:
           name: tfplan
           path: ./terraform
           run-id: ${{ github.event.workflow_run.id }}
+          github-token: ${{ github.token }}
+
 
       - name: Terraform Init
         working-directory: ./terraform
@@ -55,4 +57,5 @@ jobs:
         env:
           TF_VAR_hosted_zone_arn: ${{ secrets.HOSTED_ZONE_ARN }}
           TF_VAR_hosted_zone_id:     ${{ secrets.HOSTED_ZONE_ID }}
-        run: terraform apply -no-color -input=false -auto-approve tfplan
+        run: terraform apply -no-color -input=false tfplan
+        
