@@ -22,7 +22,6 @@ jobs:
     steps:
       - run: echo "Waiting for approval from reviewer to apply Terraform…"
 
-
   terraform:
     name: Terraform Apply
     if: ${{ github.event.workflow_run.conclusion == 'success' }}
