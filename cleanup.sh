@@ -1,12 +1,12 @@
 #!bin/bash
 
 # Delete helm releases
-helm uninstall argocd --namespace argocd
+helm uninstall ingress-nginx --namespace ingress-nginx
 helm uninstall cert-manager --namespace cert-manager
 helm uninstall external-dns --namespace external-dns
-helm uninstall ingress-nginx --namespace ingress-nginx
-helm uninstall prometheus --namespace default
-helm uninstall grafana --namespace default
+helm uninstall argocd --namespace argocd
+helm uninstall prometheus --namespace prometheus
+helm uninstall grafana --namespace grafana
 
 # Delete ArgoCD related CRDs
 kubectl delete crd applications.argoproj.io \
