@@ -21,7 +21,7 @@ jobs:
     environment: production
 
     outputs:
-      image: ${{ steps.build-image.outputs.image_tag }}
+      image_tag: ${{ steps.build-image.outputs.image_tag }}
 
     steps:
       - name: Checkout
@@ -49,7 +49,9 @@ jobs:
           docker build -t "${IMAGE}" .
           docker push "${IMAGE}"
           echo "image_tag=${IMAGE_TAG}" >> "$GITHUB_OUTPUT"
-  
+        
+
+
   deploy:
     needs: build
     runs-on: ubuntu-latest
@@ -59,37 +61,21 @@ jobs:
       AWS_REGION: eu-west-2
       ECR_REPOSITORY: k8s-ecr
       TAG: ${{ needs.build.outputs.image_tag }}
-
-
+      
     steps:
       - name: Checkout
         uses: actions/checkout@v5
 
-      - name: Configure AWS credentials
-        uses: aws-actions/configure-aws-credentials@0e613a0980cbf65ed5b322eb7a1e075d28913a83
-        with:
-          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
-          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          aws-region: eu-west-2
-
-      - name: Login to Amazon ECR
-        id: login-ecr
-        uses: aws-actions/amazon-ecr-login@62f4f872db3836360b72999f4b87f1ff13310f3a
-
       - name: Install yq
         run: |
-          sudo wget -qO /usr/local/bin/yq \
-            https://github.com/mikefarah/yq/releases/latest/download/yq_linux_amd64
+          sudo wget -qO /usr/local/bin/yq https://github.com/mikefarah/yq/releases/latest/download/yq_linux_amd64
           sudo chmod +x /usr/local/bin/yq
 
       - name: Update deployment.yaml with newly built image
-        env:
-          AWS_ACCOUNT_ID: ${{ secrets.AWS_ACCOUNT_ID }}
-          AWS_REGION: eu-west-2
-          ECR_REPOSITORY: k8s-ecr
-          TAG: ${{ needs.build.outputs.image_tag }}
         run: |
+          set -euo pipefail
           IMG="${AWS_ACCOUNT_ID}.dkr.ecr.${AWS_REGION}.amazonaws.com/${ECR_REPOSITORY}:${TAG}"
+          test -n "$TAG" || { echo "Empty TAG from needs.build.outputs.image_tag"; exit 1; }
           echo "Using image: ${IMG}"
           yq -i ".spec.template.spec.containers[0].image = \"${IMG}\"" manifest/deployment.yaml
 
@@ -98,9 +84,5 @@ jobs:
           git config user.name "${{ github.actor }}"
           git config user.email "${{ github.actor }}@users.noreply.github.com"
           git add manifest/deployment.yaml
-          git commit -m "Update image to ${{ needs.build.outputs.image }}" || echo "No changes to commit"
+          git commit -m "Update image to ${TAG}" || echo "No changes to commit"
           git push
-
-
-
-
