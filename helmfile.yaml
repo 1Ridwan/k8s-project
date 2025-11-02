@@ -2,7 +2,7 @@ helmDefaults:
   createNamespace: true
   wait: true
   atomic: true
-  timeout: 10m
+  timeout: 300
 
 repositories:
   - name: ingress-nginx
@@ -49,12 +49,13 @@ releases:
   - name: prometheus
     namespace: prometheus
     chart: prometheus/prometheus
-    version: "27.42.0"
+    version: "27.42.2"
     values:
       - helm-values/prometheus.yaml
 
   - name: grafana
     namespace: grafana
     chart: grafana/grafana
+    version: "10.1.4"
     values:
       - helm-values/grafana.yaml
