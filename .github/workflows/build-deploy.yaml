@@ -67,9 +67,6 @@ jobs:
 
       - name: Update deployment.yaml with newly built image
         run: |
-          yq -i ".spec.template.spec.containers[0].image = \"${{ needs.build.outputs.image }}\"" manifest/deployment.yaml
-
-        run: |
           IMG="${{ needs.build.outputs.image }}"
           echo "Using image: $IMG"
           yq -i ".spec.template.spec.containers[0].image = \"$IMG\"" manifest/deployment.yaml
