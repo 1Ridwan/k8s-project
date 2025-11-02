@@ -105,7 +105,7 @@ http://localhost:8080
 
 ## Why This Project?
 
-I wanted to build real projects with Kubernetes because simply reading information about it didn't allow me to piece together how everything connects. By doing this project and debugging issues with my pods, services, ingresses etc., I was able to gain that understanding, so I would recommend others to build a similar project!
+I wanted to build real projects with Kubernetes because simply reading information about it didn't allow me to piece together how everything connects. By doing this project and debugging issues with my pods, services, ingresses etc., I was able to gain that understanding. I would highly recommend others to build something similar!
 
 This project demonstrates practical expertise in:
 - Infrastructure provisioning with Terraform
