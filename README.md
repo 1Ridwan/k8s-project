@@ -26,8 +26,8 @@ This deployment turns it into a real-world cloud-native workload to showcase sca
 
 ### Architecture Description
 > - **Amazon EKS**: Managed Kubernetes control plane and worker nodes.  
-> - **Public subnets**: Host ingress and network load balancer.  
-> - **Private subnets**: Run application workloads and cluster services securely.  
+> - **Public subnets**: Host control plane ENIs and network load balancer ENIs.  
+> - **Private subnets**: Run worker nodes securely.  
 > - **NAT Gateway**: Provides outbound internet for worker nodes to pull container images.  
 > - **Nginx Ingress Controller**: Routes traffic to services through Ingress resources.  
 > - **External DNS**: Dynamically updates Route53 records for subdomain `lab.ridwanahmed.com`.  
@@ -80,6 +80,7 @@ This enables **zero-downtime deployments**, **version-controlled infrastructure*
 ![Website](./images/1.png)
 ![ArgoCD](./images/2.png)
 ![Grafana 1](./images/3.png)
+Green section represents a new pod that was automatically deployed by ArgoCD after I commited and pushed a change to GitHub
 ![Grafana 2](./images/4.png)
 
 ---
