@@ -16,7 +16,8 @@ jobs:
     environment: production
 
     outputs:
-      image: ${{ steps.build-image.outputs.image }}
+      image: ${{ steps.build-image.outputs.image_tag }}
+
 
     # TODO: make these values not readable, use secrets
     env:
@@ -45,9 +46,10 @@ jobs:
           IMAGE_TAG: ${{ github.sha }}
         working-directory: ./app
         run: |
-          docker build -t "$ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG" .
-          docker push "$ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG"
-          echo "image=$ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG" >> "$GITHUB_OUTPUT"
+          IMAGE="${ECR_REGISTRY}/${ECR_REPOSITORY}:${IMAGE_TAG}"
+          docker build -t "${IMAGE}" .
+          docker push "${IMAGE}"
+          echo "image_tag=${IMAGE_TAG}" >> "$GITHUB_OUTPUT"
 
 
 
@@ -66,10 +68,15 @@ jobs:
           sudo chmod +x /usr/local/bin/yq
 
       - name: Update deployment.yaml with newly built image
+        env:
+          AWS_ACCOUNT_ID: ${{ secrets.AWS_ACCOUNT_ID }}
+          AWS_REGION: eu-west-2
+          ECR_REPOSITORY: k8s-ecr
+          TAG: ${{ needs.build.outputs.image_tag }}
         run: |
-          IMG="${{ needs.build.outputs.image }}"
-          echo "Using image: $IMG"
-          yq -i ".spec.template.spec.containers[0].image = \"$IMG\"" manifest/deployment.yaml
+          IMG="${AWS_ACCOUNT_ID}.dkr.ecr.${AWS_REGION}.amazonaws.com/${ECR_REPOSITORY}:${TAG}"
+          echo "Using image: ${IMG}"
+          yq -i ".spec.template.spec.containers[0].image = \"${IMG}\"" manifest/deployment.yaml
 
       - name: Commit and push manifest change
         run: |
