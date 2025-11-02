@@ -4,10 +4,9 @@
 
 This project deploys the open-source [2048](https://github.com/gabrielecirulli/2048) game on **Amazon EKS**, using a **highly available, production-grade architecture** spanning two availability zones.  
 
-It demonstrates end-to-end DevOps practices — Infrastructure as Code **(IaC)**, containerisation, CI/CD automation, and GitOps deployment with **ArgoCD**.
+It demonstrates end-to-end DevOps practices with Infrastructure as Code **(IaC)**, containerisation, CI/CD automation, and GitOps deployment with **ArgoCD**.
 
-2048 is a web-based number puzzle where you combine tiles to reach the number 2048.  
-This deployment turns it into a real-world cloud-native workload to showcase scalable Kubernetes deployment on AWS.
+2048 is a web-based number puzzle where you combine tiles to reach the number 2048. This deployment turns it into a real-world cloud-native workload to showcase scalable Kubernetes deployment on AWS.
 
 ---
 
@@ -52,11 +51,10 @@ Developer → pushes code → GitHub Actions → builds image → pushes to ECR 
 ### Pipeline 2: Automated Deployment with ArgoCD
 - **Helmfile** declaratively manages all Helm charts for cluster add-ons (e.g., Nginx Ingress Controller, Cert-Manager, Prometheus, Grafana) 
 - **ArgoCD** monitors the Git repository for changes to any manifest file 
-- **GitHub Actions** triggers on every push on changes to ./app
+- **GitHub Actions** triggers on every push with changes to ./app
   1. Builds the **Docker image** of the 2048 app.  
   2. Pushes the image to **Amazon ECR**.  
   3. Updates and commits the image tag inside the Kubernetes manifest file using the SHA of the build workflow for clear visibility of which workflow created the image.
-- When the commit is detected:
   4. ArgoCD automatically **synchronises** the desired state with the live cluster.  
   5. New application pods are deployed using rolling updates (old pods remain active until the new ones are healthy).  
 
@@ -70,7 +68,7 @@ This enables **zero-downtime deployments**, **version-controlled infrastructure*
   - Pod Identity provides a more secure and simplified approach to granting AWS permissions directly to pods without requiring OIDC providers or service account annotations.
   - Each pod that needs access to AWS services (e.g., S3, Route53) is assigned a dedicated **Pod Identity association** linked to an IAM role.
   - This ensures tighter permission boundaries, automatic credential rotation, and easier debugging compared to IRSA.
-  - It also eliminates the need for managing IAM OIDC providers, reducing operational complexity and improving cluster security posture.
+  - It also eliminates the need for managing IAM OIDC providers, reducing operational complexity.
 - **IAM Roles** follow the principle of least privilege
 - **Checkov** scans all Terraform and manifest code for security misconfigurations.
 
@@ -107,9 +105,9 @@ http://localhost:8080
 
 ## Why This Project?
 
-This project strengthens my ability to design, deploy, and automate production-grade cloud-native systems using AWS and Kubernetes.
+I wanted to build real projects with Kubernetes because simply reading information about it didn't allow me to piece together how everything connects. By doing this project and debugging issues with my pods, services, ingresses etc., I was able to gain that understanding, so I would recommend others to build a similar project!
 
-It demonstrates practical expertise in:
+This project demonstrates practical expertise in:
 - Infrastructure provisioning with Terraform
 - CI/CD automation and GitOps workflows
 - Kubernetes operations with ArgoCD and Helmfile
@@ -118,6 +116,6 @@ It demonstrates practical expertise in:
 
 ## Biggest Challenges
 
-- Helm Chart Management: Initially used Terraform to install Helm charts but ran into dependency management and upgrade issues. Switched to Helmfile for better modularity and automation.
+- Helm Chart Management: Initially I used Terraform to install Helm charts but ran into installation issues when running terraform apply. Switched to Helmfile for better control and automation.
 - External DNS Permissions: DNS records were not being created due to incorrect IAM permissions for the Pod Identity; resolved after examining pod logs and adjusting IAM roles.
-- Cert-Manager Misconfiguration: Certificates failed to issue because of incorrect annotations on ingresses. Reviewing the Cert-Manager documentation helped resolve this issue.
+- Cert-Manager Misconfiguration: Certificates failed to issue because of incorrect annotations on ingresses. Reviewing the Cert-Manager documentation helped me resolve this issue.
