@@ -3,10 +3,11 @@
 ## Overview
 
 This project deploys the open-source [2048](https://github.com/gabrielecirulli/2048) game on **Amazon EKS**, using a **highly available, production-grade architecture** spanning three availability zones.  
-It demonstrates end-to-end DevOps practices — **Infrastructure as Code (IaC)**, **containerisation**, **CI/CD automation**, and **GitOps deployment** with **ArgoCD**.
+
+It demonstrates end-to-end DevOps practices — Infrastructure as Code **(IaC)**, containerisation, CI/CD automation, and GitOps deployment with **ArgoCD**.
 
 2048 is a web-based number puzzle where you combine tiles to reach the number 2048.  
-This deployment turns it into a real-world cloud-native workload to showcase **scalable Kubernetes deployment** on AWS.
+This deployment turns it into a real-world cloud-native workload to showcase scalable Kubernetes deployment on AWS.
 
 ---
 
@@ -16,7 +17,7 @@ This deployment turns it into a real-world cloud-native workload to showcase **s
 - **ArgoCD GitOps pipeline** for automated deployment.  
 - **Helmfile** to manage and install Helm charts consistently.  
 - Full **CI/CD automation** from code commit → container build → cluster deployment.  
-- Integrated **monitoring (Prometheus, Grafana)** and **security hardening (WAFv2, IAM least privilege)**.
+- Integrated **monitoring (Prometheus, Grafana)** and **security hardening (EKS Pod Identity, IAM least privilege)**.
 
 ---
 
@@ -39,14 +40,13 @@ This deployment turns it into a real-world cloud-native workload to showcase **s
 
 | AWS Resource / Tool                  | Purpose                                                                 |
 |--------------------------------------|-------------------------------------------------------------------------|
-| **Amazon EKS**                       | Runs Kubernetes workloads across multiple AZs                           |
-| **Amazon ECR**                       | Stores Docker images built by the CI/CD pipeline               |
+| **EKS**                              | Runs Kubernetes workloads across multiple AZs                           |
+| **ECR**                              | Stores Docker images built by the CI/CD pipeline                        |
 | **NGINX Ingress Controller**         | Manages inbound HTTP/HTTPS traffic                                      |
 | **External DNS**                     | Automates DNS record creation for ingress endpoints                     |
 | **Cert-Manager & Let’s Encrypt**     | Issues SSL/TLS certificates automatically                               |
-| **AWS Certificate Manager (ACM)**    | Manages additional certificates for load balancers                      |
 | **Prometheus**                       | Collects metrics for monitoring cluster performance                     |
-| **Grafana**                          | Visualizes metrics and logs for operational insights                    |
+| **Grafana**                          | Visualises metrics and logs for operational insights                    |
 | **EKS Pod Identity**                 | Provides fine-grained AWS permissions to pods securely                  |
 | **AWS S3 (Terraform Backend)**       | Stores Terraform state with remote locking                              |
 
@@ -56,34 +56,27 @@ This deployment turns it into a real-world cloud-native workload to showcase **s
 
 This project integrates **GitHub Actions**, **Helmfile**, and **ArgoCD** into a fully automated GitOps pipeline.
 
-### 🔧 1. CI: Build and Push Stage
-- **GitHub Actions** triggers on every push or pull request to the `main` branch.  
+### Pipeline 1: Terraform
+- **GitHub Actions** triggers on every push on changes to ./terraform
 - The workflow:
-  1. Runs **Checkov** to scan Terraform and Kubernetes manifests for security issues.  
-  2. Builds the **Docker image** of the 2048 app.  
-  3. Pushes the image to **Amazon ECR**.  
-  4. Updates the image tag inside Kubernetes manifest or Helm values files using the SHA of the build workflow for clear visibility of which workflow created the image.
-
-### 🚀 2. CD: Automated Deployment with ArgoCD + Helmfile
-- **Helmfile** declaratively manages all Helm charts for cluster add-ons (e.g., Nginx Ingress Controller, Cert-Manager, Prometheus, Grafana).  
-- **ArgoCD** monitors the Git repository for changes to any manifest file.  
-- When a commit is detected:
-  1. ArgoCD automatically **synchronises** the desired state with the live cluster.  
-  2. New application pods are deployed using rolling updates (old pods remain active until the new ones are healthy).  
+  1. Runs terraform linting.
+  2. Runs **Checkov** to scan Terraform and Kubernetes manifests for security issues.  
+  3. Creates a terraform plan and saves this as a manifest file to be used in the next step.
+  4. Runs terraform apply using the exact same plan from step 3 by using the artifact
+  
+### Pipeline 2: Automated Deployment with ArgoCD
+- **Helmfile** declaratively manages all Helm charts for cluster add-ons (e.g., Nginx Ingress Controller, Cert-Manager, Prometheus, Grafana) 
+- **ArgoCD** monitors the Git repository for changes to any manifest file 
+  1. Builds the **Docker image** of the 2048 app.  
+  2. Pushes the image to **Amazon ECR**.  
+  3. Updates and commits the image tag inside the Kubernetes manifest file using the SHA of the build workflow for clear visibility of which workflow created the image.
+- When the commit is detected:
+  4. ArgoCD automatically **synchronises** the desired state with the live cluster.  
+  5. New application pods are deployed using rolling updates (old pods remain active until the new ones are healthy).  
 
 This enables **zero-downtime deployments**, **version-controlled infrastructure**, and **rapid feature rollout** by simply committing code changes.
 
 ---
-
-## Security
-
-- **Security Groups** enforce least privilege:
-  - ALB allows only HTTP/HTTPS ingress from the public internet.
-  - EKS worker nodes accept traffic only from trusted sources.
-- **IAM Roles** follow the principle of least privilege:
-  - Worker node role allows pulling from ECR.
-- **Checkov** scans all Terraform and manifest code for security misconfigurations.
-
 ## Security
 
 - **EKS Pod Identity (Replacing IRSA):**
@@ -92,20 +85,8 @@ This enables **zero-downtime deployments**, **version-controlled infrastructure*
   - Each pod that needs access to AWS services (e.g., S3, Route53) is assigned a dedicated **Pod Identity association** linked to an IAM role.
   - This ensures tighter permission boundaries, automatic credential rotation, and easier debugging compared to IRSA.
   - It also eliminates the need for managing IAM OIDC providers, reducing operational complexity and improving cluster security posture.
-- **IAM Roles** follow the principle of least privilege:
-  - Worker node role allows pulling from ECR and writing logs to CloudWatch.
+- **IAM Roles** follow the principle of least privilege
 - **Checkov** scans all Terraform and manifest code for security misconfigurations.
-
----
-## Deployment Tools
-
-| Tool                   | Purpose                                                                 |
-|-------------------------|-------------------------------------------------------------------------|
-| **Terraform**           | Provisions VPC, subnets, IAM, Pod Identity, and EKS resources.          |
-| **Docker**              | Builds and packages the 2048 container image.                           |
-| **GitHub Actions**      | Runs CI pipeline for build, test, and security scanning.                |
-| **Helmfile**            | Declaratively installs and manages Helm charts for Kubernetes add-ons.  |
-| **ArgoCD**              | Implements GitOps and automatically deploys manifest changes.           |
 
 ---
 
@@ -133,11 +114,9 @@ cd app
 # Build and run locally
 docker build -t 2048-app:local .
 docker run -d --rm --name 2048-app -p 8080:8080 2048-app:local
-
+```
 Then open:
 http://localhost:8080
-
-```
 
 ## Why This Project?
 
@@ -149,3 +128,10 @@ It demonstrates practical expertise in:
 - CI/CD automation and GitOps workflows
 - Kubernetes operations with ArgoCD and Helmfile
 - Observability and cloud security best practices
+
+
+## Biggest Challenges
+
+- Helm Chart Management: Initially used Terraform to install Helm charts but ran into dependency management and upgrade issues. Switched to Helmfile for better modularity and automation.
+- External DNS Permissions: DNS records were not being created due to incorrect IAM permissions for the Pod Identity; resolved after examining pod logs and adjusting IAM roles.
+- Cert-Manager Misconfiguration: Certificates failed to issue because of incorrect annotations on ingresses. Reviewing the Cert-Manager documentation helped resolve this issue.
