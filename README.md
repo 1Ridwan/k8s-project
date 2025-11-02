@@ -81,6 +81,7 @@ This enables **zero-downtime deployments**, **version-controlled infrastructure*
 ![ArgoCD](./images/2.png)
 ![Grafana 1](./images/3.png)
 Green section represents a new pod that was automatically deployed by ArgoCD after I commited and pushed a change to GitHub
+
 ![Grafana 2](./images/4.png)
 
 ---
@@ -94,7 +95,7 @@ cd app
 
 # Build and run locally
 docker build -t 2048-app:local .
-docker run -d --rm --name 2048-app -p 8080:8080 2048-app:local
+docker run -d --rm --name 2048-app -p 8080:80 2048-app:local
 ```
 Then open:
 http://localhost:8080
