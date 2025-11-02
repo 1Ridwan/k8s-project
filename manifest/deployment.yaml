@@ -18,7 +18,7 @@ spec:
           image: "241661649258.dkr.ecr.eu-west-2.amazonaws.com/k8s-ecr:8079e1e7880e24fd0811e0f0ae2d6ca6eeebdf62"
           ports:
             - name: http
-              containerPort: 8080
+              containerPort: 80
           readinessProbe:
             httpGet: {path: "/", port: http}
             initialDelaySeconds: 5
