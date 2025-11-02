@@ -2,7 +2,7 @@
 
 ## Overview
 
-This project deploys the open-source [2048](https://github.com/gabrielecirulli/2048) game on **Amazon EKS**, using a **highly available, production-grade architecture** spanning three availability zones.  
+This project deploys the open-source [2048](https://github.com/gabrielecirulli/2048) game on **Amazon EKS**, using a **highly available, production-grade architecture** spanning two availability zones.  
 
 It demonstrates end-to-end DevOps practices — Infrastructure as Code **(IaC)**, containerisation, CI/CD automation, and GitOps deployment with **ArgoCD**.
 
@@ -35,31 +35,16 @@ This deployment turns it into a real-world cloud-native workload to showcase sca
 > - **Prometheus & Grafana**: Provide observability and cluster health visualisation.  
 
 ---
-
-## Architecture Components
-
-| AWS Resource / Tool                  | Purpose                                                                 |
-|--------------------------------------|-------------------------------------------------------------------------|
-| **EKS**                              | Runs Kubernetes workloads across multiple AZs                           |
-| **ECR**                              | Stores Docker images built by the CI/CD pipeline                        |
-| **NGINX Ingress Controller**         | Manages inbound HTTP/HTTPS traffic                                      |
-| **External DNS**                     | Automates DNS record creation for ingress endpoints                     |
-| **Cert-Manager & Let’s Encrypt**     | Issues SSL/TLS certificates automatically                               |
-| **Prometheus**                       | Collects metrics for monitoring cluster performance                     |
-| **Grafana**                          | Visualises metrics and logs for operational insights                    |
-| **EKS Pod Identity**                 | Provides fine-grained AWS permissions to pods securely                  |
-| **AWS S3 (Terraform Backend)**       | Stores Terraform state with remote locking                              |
-
----
-
 ## CI/CD and GitOps Workflow
+![GitOps Workflow](./images/cicd-diagram.png)
 
-This project integrates **GitHub Actions**, **Helmfile**, and **ArgoCD** into a fully automated GitOps pipeline.
+Developer → pushes code → GitHub Actions → builds image → pushes to ECR → updates manifests → commits to Git → ArgoCD syncs actual state with desired state
+
 
 ### Pipeline 1: Terraform
 - **GitHub Actions** triggers on every push on changes to ./terraform
 - The workflow:
-  1. Runs terraform linting.
+  1. Runs terraform linting to detect errors in terraform code.
   2. Runs **Checkov** to scan Terraform and Kubernetes manifests for security issues.  
   3. Creates a terraform plan and saves this as a manifest file to be used in the next step.
   4. Runs terraform apply using the exact same plan from step 3 by using the artifact
@@ -67,6 +52,7 @@ This project integrates **GitHub Actions**, **Helmfile**, and **ArgoCD** into a 
 ### Pipeline 2: Automated Deployment with ArgoCD
 - **Helmfile** declaratively manages all Helm charts for cluster add-ons (e.g., Nginx Ingress Controller, Cert-Manager, Prometheus, Grafana) 
 - **ArgoCD** monitors the Git repository for changes to any manifest file 
+- **GitHub Actions** triggers on every push on changes to ./app
   1. Builds the **Docker image** of the 2048 app.  
   2. Pushes the image to **Amazon ECR**.  
   3. Updates and commits the image tag inside the Kubernetes manifest file using the SHA of the build workflow for clear visibility of which workflow created the image.
@@ -91,16 +77,10 @@ This enables **zero-downtime deployments**, **version-controlled infrastructure*
 ---
 
 ## Screenshots
-![VPC Resources](./images/1.png)
-![ALB Resource Map](./images/2.png)
-![EKS Cluster](./images/3.png)
-![ACM Certificate](./images/4.png)
-![Website 1](./images/5.png)
-![Website 2](./images/6.png)
-![Deploy to EKS](./images/7.png)
-![Terraform Plan](./images/8.png)
-![Terraform Apply](./images/9.png)
-![Terraform Destroy](./images/10.png)
+![Website](./images/1.png)
+![ArgoCD](./images/2.png)
+![Grafana 1](./images/3.png)
+![Grafana 2](./images/4.png)
 
 ---
 
@@ -108,7 +88,7 @@ This enables **zero-downtime deployments**, **version-controlled infrastructure*
 
 ```bash
 # Clone the repository
-git clone https://github.com/1Ridwan/ECS.git
+git clone https://github.com/1Ridwan/k8s-project .git
 cd app
 
 # Build and run locally
