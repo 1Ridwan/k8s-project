@@ -7,7 +7,7 @@ spec:
   replicas: 1
   selector:
     matchLabels:
-      app: myapp 
+      app: myapp
   template:
     metadata:
       labels:
@@ -15,19 +15,15 @@ spec:
     spec:
       containers:
         - name: myapp
-          image: 241661649258.dkr.ecr.eu-west-2.amazonaws.com/k8s-ecr:latest
+          image: ""
           ports:
             - name: http
               containerPort: 8080
           readinessProbe:
-            httpGet: { path: "/", port: http }
+            httpGet: {path: "/", port: http}
             initialDelaySeconds: 5
             periodSeconds: 10
           livenessProbe:
-            httpGet: { path: "/", port: http }
+            httpGet: {path: "/", port: http}
             initialDelaySeconds: 10
             periodSeconds: 20
-
-
-
-
