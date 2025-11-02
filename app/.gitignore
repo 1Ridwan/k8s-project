@@ -1,1 +1,10 @@
 .sass-cache/
+.git
+.github
+*.log
+*.map
+node_modules
+tests
+Dockerfile
+docker-compose.yml
+.DS_Store
