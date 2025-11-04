@@ -17,7 +17,9 @@ import {
 
 resource "aws_ecr_repository" "main" {
   name = "k8s-ecr"
-  scan_on_push = true
+  image_scanning_configuration {
+    scan_on_push = true
+  }
 
   force_delete = false
 }
