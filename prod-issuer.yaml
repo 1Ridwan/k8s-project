@@ -1,4 +1,3 @@
-# clusterissuer-lets-encrypt-staging.yaml
 apiVersion: cert-manager.io/v1
 kind: ClusterIssuer
 metadata:
@@ -9,9 +8,12 @@ spec:
     email: ridwan157@outlook.com
     profile: tlsserver
     privateKeySecretRef:
-      name: letsencrypt-production
+      name: nginx1
     solvers:
     - dns01:
         route53:
           region: eu-west-2
-          hostedZoneID: var.hosted_zone_id
+          hostedZoneID: Z0717143R661NCU61KOX
+    - http01:
+        ingress:
+          class: nginx
