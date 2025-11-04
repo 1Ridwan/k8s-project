@@ -1,7 +1,7 @@
 # .checkov.yaml
 framework: terraform
 
-skip-check:
+check:
   - CKV_AWS_260   # ALB needs port 80 open to perform HTTP->HTTPS redirect; app still served over 443
   - CKV2_AWS_38   # Route53 DNSSEC not required for demo subdomain/zone
   - CKV2_AWS_39   # Route53 query logging not necessary for demo traffic
@@ -19,3 +19,5 @@ skip-check:
   - CKV_AWS_51
   - CKV_AWS_150
   - CKV_AWS_136
+  - CKV_TF_1
+  - CKV_TF_2
