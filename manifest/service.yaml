@@ -9,6 +9,6 @@ spec:
   ports:
     - name: http
       port: 80
-      targetPort: http       # -> containerPort 8080 by name
+      targetPort: http       # -> containerPort 80 by name
   type: ClusterIP
 ---
