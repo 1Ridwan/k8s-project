@@ -32,19 +32,27 @@ releases:
     version: "1.18.2"
     values:
       - helm-values/cert-manager.yaml
+    needs: 
+      - ingress-nginx
 
   - name: external-dns
     namespace: external-dns
     chart: external-dns/external-dns
     values:
       - helm-values/external-dns.yaml
-
+    needs: 
+      - ingress-nginx
+      
   - name: argocd
     namespace: argocd
     chart: argocd/argo-cd
     version: "9.0.5" 
     values:
       - helm-values/argocd-values.yaml
+    needs: 
+      - ingress-nginx
+      - external-dns
+      - cert-manager
 
   - name: prometheus
     namespace: prometheus
@@ -52,6 +60,10 @@ releases:
     version: "27.42.2"
     values:
       - helm-values/prometheus.yaml
+    needs: 
+      - ingress-nginx
+      - external-dns
+      - cert-manager
 
   - name: grafana
     namespace: grafana
@@ -59,3 +71,7 @@ releases:
     version: "10.1.4"
     values:
       - helm-values/grafana.yaml
+    needs: 
+      - ingress-nginx
+      - external-dns
+      - cert-manager
