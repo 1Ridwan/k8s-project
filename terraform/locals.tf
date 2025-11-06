@@ -6,7 +6,7 @@ locals {
   cluster_name = "cluster-lab"
 
   tags = {
-    Environment = "showcase2"
+    Environment = "showcase1"
     Project     = "EKS Project showcase"
     Owner       = "Ridwan"
   }
