@@ -87,7 +87,7 @@ jobs:
         with:
           terraform_version: 1.12.0
 
-      # Configures AWS access by using the credentials stored in GitHub Secrets
+      # Configures AWS access by using OIDC
       - name: Configure AWS credentials
         uses: aws-actions/configure-aws-credentials@9dfa9aa010133d4807cd0272ad05d3fdb5b01340
         with:

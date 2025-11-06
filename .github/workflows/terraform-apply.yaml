@@ -6,12 +6,18 @@ on:
     branches: [main]
     types: [completed]
 
+    
+env:
+  AWS_REGION: "eu-west-2"
+
 permissions:
+  id-token: write
   contents: read
 
 concurrency:
   group: terraform-apply
   cancel-in-progress: true
+
 
 jobs:
   gate:
@@ -39,13 +45,17 @@ jobs:
         with:
           terraform_version: 1.12.0
 
-      # Configures AWS access by using the credentials stored in GitHub Secrets
+      # Configures AWS access by using OIDC
       - name: Configure AWS credentials
-        uses: aws-actions/configure-aws-credentials@0e613a0980cbf65ed5b322eb7a1e075d28913a83
+        uses: aws-actions/configure-aws-credentials@9dfa9aa010133d4807cd0272ad05d3fdb5b01340
         with:
-          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
-          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          aws-region: "eu-west-2"
+          role-to-assume: arn:aws:iam::241661649258:role/Github-actions-k8s
+          role-session-name: tfapply
+          aws-region: ${{ env.AWS_REGION }}
+
+          # aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          # aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          # aws-region: "eu-west-2"
 
       # Download the plan artifact produced by the triggering Plan run
       - name: Download saved plan
