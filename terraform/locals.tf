@@ -7,7 +7,7 @@ locals {
 
   tags = {
     Environment = "showcase2"
-    Project     = "EKS Project 1"
+    Project     = "EKS Project showcase"
     Owner       = "Ridwan"
   }
 }

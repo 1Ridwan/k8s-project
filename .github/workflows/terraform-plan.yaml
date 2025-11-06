@@ -73,7 +73,7 @@ jobs:
       
   terraformplan:
     name: Terraform Plan
-    needs: [tflint, checkov] # add checkov later  
+    needs: [tflint] # add checkov later  
     runs-on: ubuntu-latest
 
     steps:
