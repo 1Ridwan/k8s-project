@@ -89,7 +89,7 @@ jobs:
 
       # Configures AWS access by using the credentials stored in GitHub Secrets
       - name: Configure AWS credentials
-        uses: aws-actions/configure-aws-credentials@e3dd6a429d7300a6a4c196c26e071d42e034350
+        uses: aws-actions/configure-aws-credentials@9dfa9aa010133d4807cd0272ad05d3fdb5b01340
         with:
           role-to-assume: arn:aws:iam::241661649258:role/Github-actions-k8s
           role-session-name: tfplan
