@@ -28,12 +28,17 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v5
 
+      # Configures AWS access by using OIDC
       - name: Configure AWS credentials
-        uses: aws-actions/configure-aws-credentials@0e613a0980cbf65ed5b322eb7a1e075d28913a83
+        uses: aws-actions/configure-aws-credentials@9dfa9aa010133d4807cd0272ad05d3fdb5b01340
         with:
-          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
-          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          role-to-assume: arn:aws:iam::241661649258:role/Github-actions-k8s
+          role-session-name: deploy
           aws-region: ${{ env.AWS_REGION }}
+
+          # aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          # aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          # aws-region: "eu-west-2"
 
       - name: Login to Amazon ECR
         id: login-ecr
@@ -83,8 +88,8 @@ jobs:
 
       - name: Commit and push manifest change
         run: |
-          git config user.name "${{ github.actor }}"
-          git config user.email "${{ github.actor }}@users.noreply.github.com"
+          git config --global user.name "${{ github.actor }}"
+          git config --global user.email "${{ github.actor }}@users.noreply.github.com"
           git add manifest/deployment.yaml
           git commit -m "Update image to ${TAG}" || echo "No changes to commit"
           git push
