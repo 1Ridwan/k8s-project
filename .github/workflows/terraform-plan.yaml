@@ -5,7 +5,6 @@ on:
     paths:
       - 'terraform/**'
 
-  
 env:
   AWS_REGION: "eu-west-2"
 
@@ -94,10 +93,6 @@ jobs:
           role-to-assume: arn:aws:iam::241661649258:role/Github-actions-k8s
           role-session-name: tfplan
           aws-region: ${{ env.AWS_REGION }}
-
-          # aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
-          # aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          # aws-region: "eu-west-2"
 
       - name: Terraform Init
         working-directory: ./terraform

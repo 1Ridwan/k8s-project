@@ -20,6 +20,9 @@ concurrency:
 
 
 jobs:
+
+
+# use approval gate to prevent pipeline running automatically
   gate:
     name: Approval gate
     if: ${{ github.event.workflow_run.conclusion == 'success' }}
@@ -52,10 +55,6 @@ jobs:
           role-to-assume: arn:aws:iam::241661649258:role/Github-actions-k8s
           role-session-name: tfapply
           aws-region: ${{ env.AWS_REGION }}
-
-          # aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
-          # aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          # aws-region: "eu-west-2"
 
       # Download the plan artifact produced by the triggering Plan run
       - name: Download saved plan

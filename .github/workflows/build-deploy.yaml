@@ -1,6 +1,6 @@
 name: Build Docker Image and Deploy to Amazon ECR
 
-# triggered on changes to app path
+# triggered on changes to path ./app/
 on:
   push:
     paths:
