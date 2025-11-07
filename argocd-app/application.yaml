@@ -15,11 +15,6 @@ spec:
     namespace: apps
     server: 'https://kubernetes.default.svc'
 
-  source:
-    path: manifest
-    repoURL: 'https://github.com/1Ridwan/k8s-project.git'
-    targetRevision: HEAD
-
   syncPolicy:
     syncOptions:
       - CreateNamespace=true
