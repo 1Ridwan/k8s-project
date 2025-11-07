@@ -1,8 +1,3 @@
-#repoServer:
- # serviceAccount:
-  #  create: true
-   # name: argocd-repo-server
-  
 server:
   url: https://argocd.lab.ridwanahmed.com
   extraArgs:
