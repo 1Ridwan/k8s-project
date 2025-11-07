@@ -1,17 +1,12 @@
-adminPassword: "1234"
 replicas: 1
-
 image:
-  # -- The Docker registry
   registry: docker.io
-  # -- Docker image repository
   repository: grafana/grafana
-  # Overrides the Grafana image tag whose default is the chart appVersion
-  tag: ""
-  sha: ""
+  # # Overrides the Grafana image tag whose default is the chart appVersion
+  # tag: ""
+  # sha: ""
   pullPolicy: IfNotPresent
 
-# Pre-provision a Prometheus datasource
 datasources:
   datasources.yaml:
     apiVersion: 1
