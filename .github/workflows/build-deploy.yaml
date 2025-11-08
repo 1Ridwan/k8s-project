@@ -23,7 +23,7 @@ jobs:
   # use image tag from this step to use in next step
     outputs:
       image_tag: ${{ steps.build-image.outputs.image_tag }}
-      image: ${{ steps.build-image.outputs.image }}
+      # image: ${{ steps.build-image.outputs.image }}
 
     steps:
       - name: Checkout
@@ -61,7 +61,7 @@ jobs:
           IMAGE_TAG: ${{ github.sha }}
           IMAGE: ${ECR_REGISTRY}/${ECR_REPOSITORY}:${IMAGE_TAG}
         with:
-          image-ref: ${IMAGE}
+          image-ref: ${{ env.IMAGE }}
           format: 'table'
           exit-code: '1'
           ignore-unfixed: true
