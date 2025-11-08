@@ -25,6 +25,6 @@ resource "aws_ecr_repository" "main" {
     encryption_type = "KMS"
   }
 
-
+  image_tag_mutability = "IMMUTABLE"
   force_delete = false
 }
