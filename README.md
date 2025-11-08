@@ -53,10 +53,11 @@ Developer → pushes code → GitHub Actions → builds image → pushes to ECR 
 - **ArgoCD** monitors the Git repository for changes to any manifest file 
 - **GitHub Actions** triggers on every push with changes to ./app
   1. Builds the **Docker image** of the 2048 app.  
-  2. Pushes the image to **Amazon ECR**.  
-  3. Updates and commits the image tag inside the Kubernetes manifest file using the SHA of the build workflow for clear visibility of which workflow created the image.
-  4. ArgoCD automatically **synchronises** the desired state with the live cluster.  
-  5. New application pods are deployed using rolling updates (old pods remain active until the new ones are healthy).  
+  2. Scans the image using **Trivy**.
+  3. Pushes the image to **Amazon ECR**.  
+  4. Updates and commits the image tag inside the Kubernetes manifest file using the SHA of the build workflow for clear visibility of which workflow created the image.
+  5. ArgoCD automatically **synchronises** the desired state with the live cluster.  
+  6. New application pods are deployed using rolling updates (old pods remain active until the new ones are healthy).  
 
 This enables **zero-downtime deployments**, **version-controlled infrastructure**, and **rapid feature rollout** by simply committing code changes.
 
@@ -71,6 +72,7 @@ This enables **zero-downtime deployments**, **version-controlled infrastructure*
   - It also eliminates the need for managing IAM OIDC providers, reducing operational complexity.
 - **IAM Roles** follow the principle of least privilege
 - **Checkov** scans all Terraform and manifest code for security misconfigurations.
+- **Trivy** scans the image for vulnerabilities. 
 
 ---
 
