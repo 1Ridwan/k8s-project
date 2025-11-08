@@ -26,5 +26,5 @@ resource "aws_ecr_repository" "main" {
   }
 
   image_tag_mutability = "IMMUTABLE"
-  force_delete = false
+  force_delete         = false
 }
