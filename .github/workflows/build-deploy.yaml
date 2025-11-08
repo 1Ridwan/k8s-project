@@ -58,8 +58,6 @@ jobs:
         uses: aquasecurity/trivy-action@0.28.0
         env:
           ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
-          IMAGE_TAG: ${{ github.sha }}
-          IMAGE: ${ECR_REGISTRY}/${ECR_REPOSITORY}:${IMAGE_TAG}
           ECR_REPOSITORY: k8s-ecr
         with:
           image-ref: "${{ env.ECR_REGISTRY }}/${{ env.ECR_REPOSITORY }}:${{ github.sha }}"
@@ -83,17 +81,8 @@ jobs:
           echo "image_tag=${IMAGE_TAG}" >> "$GITHUB_OUTPUT"
         
 
-
-
-
-
-
-
-
-
-
-
   deploy:
+    name: Deploy
     needs: build
     runs-on: ubuntu-latest
 
