@@ -20,3 +20,6 @@ kubectl delete crd certificaterequests.cert-manager.io \
                    clusterissuers.cert-manager.io \
                    issuers.cert-manager.io \
                    orders.acme.cert-manager.io
+
+cd ./terraform
+terraform destroy -auto-approve
