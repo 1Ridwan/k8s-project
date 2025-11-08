@@ -1,6 +1,6 @@
 module "vpc" {
-  source = "terraform-aws-modules/vpc/aws"
-
+  source = "terraform-aws-modules/vpc/aws.git?ref=b3fb14ff51b6e6714b6edc97972267950b66cb50"
+  
   name = local.name
 
   region = local.region
