@@ -62,7 +62,7 @@ jobs:
           IMAGE: ${ECR_REGISTRY}/${ECR_REPOSITORY}:${IMAGE_TAG}
           ECR_REPOSITORY: k8s-ecr
         with:
-          image-ref: "${{ env.ECR_REGISTRY }}/${{ env.ECR_REPOSITORY }}:${{ github.sha }}""
+          image-ref: "${{ env.ECR_REGISTRY }}/${{ env.ECR_REPOSITORY }}:${{ github.sha }}"
           format: 'table'
           exit-code: '1'
           ignore-unfixed: true
