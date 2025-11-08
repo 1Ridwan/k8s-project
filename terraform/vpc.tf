@@ -3,6 +3,8 @@ module "vpc" {
 
   name = local.name
 
+  region = local.region
+
   cidr = "10.0.0.0/16"
 
   azs = ["${local.region}a", "${local.region}b"]
