@@ -21,13 +21,15 @@ concurrency:
 
 jobs:
 
-# use approval gate to prevent pipeline running automatically
-  gate:
-    name: Approval gate
-    if: ${{ github.event.workflow_run.conclusion == 'success' }}
+
+  review:
+    name: Review terraform plan
     runs-on: ubuntu-latest
-    environment: production
     steps:
+
+      # Pulls latest version of code from GitHub repository
+      - name: Checkout code
+        uses: actions/checkout@v5
 
       # # Download the plan artifact produced by the triggering Plan run
       # - name: Download saved plan
@@ -37,11 +39,19 @@ jobs:
       #     path: ./terraform
       #     run-id: ${{ github.event.workflow_run.id }}
       #     github-token: ${{ github.token }}
-
+      
       - name: Show Plan (for reviewer)
         working-directory: ./terraform
         run: terraform show -no-color tfplan | tee plan.txt
 
+
+# use approval gate to prevent pipeline running automatically
+  gate:
+    name: Approval gate
+    if: ${{ github.event.workflow_run.conclusion == 'success' }}
+    runs-on: ubuntu-latest
+    environment: production
+    steps:
       - run: echo "Waiting for approval from ${{ github.actor }} to apply Terraform…"
 
   terraform:
