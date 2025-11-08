@@ -57,17 +57,19 @@ jobs:
     
     steps:
       - uses: actions/checkout@v5
+
       - name: Set up Python 3.8
         uses: actions/setup-python@v4
         with:
           python-version: 3.8
+
+
       - name: Test with Checkov
         id: checkov
         uses: bridgecrewio/checkov-action@master
         with:
           directory: ./terraform
-          config_file: ./terraform/.checkov.yaml
-
+          # config_file: ./terraform/.checkov.yaml
           framework: terraform 
       
   terraformplan:
