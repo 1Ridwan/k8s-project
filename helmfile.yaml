@@ -10,7 +10,7 @@ repositories:
   - name: cert-manager
     url: https://charts.jetstack.io
   - name: external-dns
-    url: https://charts.bitnami.com/bitnami
+    url: https://kubernetes-sigs.github.io/external-dns/
   - name: argocd
     url: https://argoproj.github.io/argo-helm
   - name: prometheus
@@ -38,6 +38,7 @@ releases:
   - name: external-dns
     namespace: external-dns
     chart: external-dns/external-dns
+    version: "1.19.0"
     values:
       - helm-values/external-dns.yaml
     needs: 
