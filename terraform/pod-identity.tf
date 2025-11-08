@@ -1,7 +1,6 @@
 module "cert_manager_pod_identity" {
-  source = "terraform-aws-modules/eks-pod-identity/aws.git?ref=6b2ba41882f042bc9ab7a256989f282a03d66c1d"
+  source = "git::https://github.com/terraform-aws-modules/terraform-aws-eks-pod-identity.git?ref=6b2ba41882f042bc9ab7a256989f282a03d66c1d"
   name   = "cert-manager"
-
   attach_cert_manager_policy    = true
   cert_manager_hosted_zone_arns = [var.hosted_zone_arn]
 
@@ -16,7 +15,7 @@ resource "aws_eks_pod_identity_association" "cert_manager" {
 
 
 module "external_dns_pod_identity" {
-  source = "terraform-aws-modules/eks-pod-identity/aws.git?ref=6b2ba41882f042bc9ab7a256989f282a03d66c1d"
+  source = "git::https://github.com/terraform-aws-modules/terraform-aws-eks-pod-identity.git?ref=6b2ba41882f042bc9ab7a256989f282a03d66c1d"
   name   = "external-dns"
 
   attach_external_dns_policy    = true
@@ -48,7 +47,7 @@ resource "aws_eks_pod_identity_association" "external_dns" {
 # }
 
 module "amazon_managed_service_prometheus_pod_identity" {
-  source = "terraform-aws-modules/eks-pod-identity/aws.git?ref=6b2ba41882f042bc9ab7a256989f282a03d66c1d"
+  source = "git::https://github.com/terraform-aws-modules/terraform-aws-eks-pod-identity.git?ref=6b2ba41882f042bc9ab7a256989f282a03d66c1d"
 
   name = "amazon-managed-service-prometheus"
 
