@@ -31,15 +31,21 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v5
 
-      # # Download the plan artifact produced by the triggering Plan run
-      # - name: Download saved plan
-      #   uses: actions/download-artifact@v4
-      #   with:
-      #     name: tfplan
-      #     path: ./terraform
-      #     run-id: ${{ github.event.workflow_run.id }}
-      #     github-token: ${{ github.token }}
-      
+      # Installs Terraform on the GitHub runner
+      - name: Set up Terraform
+        uses: hashicorp/setup-terraform@v3
+        with:
+          terraform_version: 1.12.0
+
+      # Download the plan artifact produced by the triggering Plan run
+      - name: Download saved plan
+        uses: actions/download-artifact@v4
+        with:
+          name: tfplan
+          path: ./terraform
+          run-id: ${{ github.event.workflow_run.id }}
+          github-token: ${{ github.token }}
+
       - name: Show Plan (for reviewer)
         working-directory: ./terraform
         run: terraform show -no-color tfplan | tee plan.txt
