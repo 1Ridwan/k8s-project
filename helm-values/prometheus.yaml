@@ -371,20 +371,20 @@ server:
 
 
 
-  ingress:
-    enabled: true
-    ingressClassName: nginx
-    annotations:
-      nginx.ingress.kubernetes.io/backend-protocol: "HTTP"
-      nginx.ingress.kubernetes.io/ssl-redirect: "true"
-      cert-manager.io/cluster-issuer: letsencrypt-staging
-    hostname: prometheus.lab.ridwanahmed.com 
-    hosts:
-      - prometheus.lab.ridwanahmed.com
-    tls:
-      - hosts:
-          - prometheus.lab.ridwanahmed.com
-        secretName: prometheus-server-tls
+  # ingress:
+  #   enabled: true
+  #   ingressClassName: nginx
+  #   annotations:
+  #     nginx.ingress.kubernetes.io/backend-protocol: "HTTP"
+  #     nginx.ingress.kubernetes.io/ssl-redirect: "true"
+  #     cert-manager.io/cluster-issuer: letsencrypt-staging
+  #   hostname: prometheus.lab.ridwanahmed.com 
+  #   hosts:
+  #     - prometheus.lab.ridwanahmed.com
+  #   tls:
+  #     - hosts:
+  #         - prometheus.lab.ridwanahmed.com
+  #       secretName: prometheus-server-tls
 
 
 

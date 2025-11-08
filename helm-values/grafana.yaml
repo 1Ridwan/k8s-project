@@ -1,10 +1,5 @@
 replicas: 1
 image:
-  registry: docker.io
-  repository: grafana/grafana
-  # # Overrides the Grafana image tag whose default is the chart appVersion
-  # tag: ""
-  # sha: ""
   pullPolicy: IfNotPresent
 
 datasources:
@@ -27,7 +22,7 @@ ingress:
   annotations:
     nginx.ingress.kubernetes.io/backend-protocol: "HTTP"
     nginx.ingress.kubernetes.io/ssl-redirect: "true"
-    cert-manager.io/cluster-issuer: letsencrypt-staging
+    cert-manager.io/cluster-issuer: letsencrypt-production
   hosts:
     - grafana.lab.ridwanahmed.com
   path: /
