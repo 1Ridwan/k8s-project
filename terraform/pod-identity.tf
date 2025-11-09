@@ -30,36 +30,20 @@ resource "aws_eks_pod_identity_association" "external_dns" {
   role_arn        = module.external_dns_pod_identity.iam_role_arn
 }
 
-# module "argocd_pod_identity" {
-#   source = "terraform-aws-modules/eks-pod-identity/aws"
+# module "amazon_managed_service_prometheus_pod_identity" {
+#   source = "git::https://github.com/terraform-aws-modules/terraform-aws-eks-pod-identity.git?ref=6b2ba41882f042bc9ab7a256989f282a03d66c1d"
 
-#   name = "argocd"
+#   name = "amazon-managed-service-prometheus"
 
-#   attach_custom_policy    = true
-#   source_policy_documents = [file("eks-cluster-policy.json")]
+#   attach_amazon_managed_service_prometheus_policy  = true
+#   amazon_managed_service_prometheus_workspace_arns = ["arn:aws:prometheus:*:*:workspace/foo"]
+
 # }
 
-# resource "aws_eks_pod_identity_association" "argocd_repo" {
+# resource "aws_eks_pod_identity_association" "prometheus" {
 #   cluster_name    = module.eks.cluster_name
-#   namespace       = "argocd"
-#   service_account = "argocd-repo-server"
-#   role_arn        = module.argocd_pod_identity.iam_role_arn
+#   namespace       = "prometheus"
+#   service_account = "prometheus"
+#   role_arn        = module.amazon_managed_service_prometheus_pod_identity.iam_role_arn
 # }
-
-module "amazon_managed_service_prometheus_pod_identity" {
-  source = "git::https://github.com/terraform-aws-modules/terraform-aws-eks-pod-identity.git?ref=6b2ba41882f042bc9ab7a256989f282a03d66c1d"
-
-  name = "amazon-managed-service-prometheus"
-
-  attach_amazon_managed_service_prometheus_policy  = true
-  amazon_managed_service_prometheus_workspace_arns = ["arn:aws:prometheus:*:*:workspace/foo"]
-
-}
-
-resource "aws_eks_pod_identity_association" "prometheus" {
-  cluster_name    = module.eks.cluster_name
-  namespace       = "prometheus"
-  service_account = "prometheus"
-  role_arn        = module.amazon_managed_service_prometheus_pod_identity.iam_role_arn
-}
 
