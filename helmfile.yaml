@@ -58,13 +58,14 @@ releases:
   - name: prometheus
     namespace: prometheus
     chart: prometheus/prometheus
-    version: "27.42.2"
+    version: "27.44.1"
     values:
       - helm-values/prometheus.yaml
     needs: 
       - ingress-nginx/ingress-nginx
       - external-dns/external-dns
       - cert-manager/cert-manager
+    atomic: false
 
   - name: grafana
     namespace: grafana
