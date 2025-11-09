@@ -1,0 +1,18 @@
+helmDefaults:
+  createNamespace: true
+  wait: true
+  atomic: false
+  timeout: 300
+
+repositories:
+  - name: prometheus
+    url: https://prometheus-community.github.io/helm-charts
+
+releases:
+  - name: prometheus
+    namespace: prometheus
+    chart: prometheus/prometheus
+    version: "27.44.1"
+    values:
+      - helm-values/prometheus.yaml
+
