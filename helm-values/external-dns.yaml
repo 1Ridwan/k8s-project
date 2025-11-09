@@ -1,7 +1,11 @@
-global:
-  security:
-    allowInsecureImages: true   # required by newer Bitnami charts when not using official Bitnami images
+# global:
+#   security:
+#     allowInsecureImages: true   # required by newer Bitnami charts when not using official Bitnami images
   
+serviceAccounts:
+  create: true
+  name: external-dns
+
 sources:
   - ingress
 
