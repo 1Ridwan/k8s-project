@@ -5,6 +5,9 @@ metadata:
   namespace: apps
   annotations:
     cert-manager.io/cluster-issuer: letsencrypt-production
+    # ingress allows more time for slow endpoints
+    nginx.ingress.kubernetes.io/proxy-read-timeout: "120" 
+    nginx.ingress.kubernetes.io/proxy-send-timeout: "120"
 spec:
   ingressClassName: nginx
   tls:
