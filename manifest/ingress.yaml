@@ -14,7 +14,7 @@ spec:
     - hosts: ["coderco.lab.ridwanahmed.com"]
       secretName: shiori
   rules:
-    - host: coderco.ridwanahmed.com
+    - host: coderco.lab.ridwanahmed.com
       http:
         paths:
           - path: /
