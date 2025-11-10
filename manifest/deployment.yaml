@@ -15,7 +15,7 @@ spec:
     spec:
       containers:
         - name: myapp
-          image: "241661649258.dkr.ecr.eu-west-2.amazonaws.com/k8s-ecr:430858f8542577b1c91162173f8ea0e595a2beab"
+          image: "241661649258.dkr.ecr.eu-west-2.amazonaws.com/k8s-ecr:d3017c4c33d18d98b391e7ed27851c309fdd079c"
           ports:
             - name: http
               containerPort: 80
@@ -29,4 +29,3 @@ spec:
             periodSeconds: 10
             timeoutSeconds: 1
             failureThreshold: 3
-
