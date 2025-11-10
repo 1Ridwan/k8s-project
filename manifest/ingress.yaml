@@ -11,10 +11,10 @@ metadata:
 spec:
   ingressClassName: nginx
   tls:
-    - hosts: ["lab.ridwanahmed.com"]
+    - hosts: ["coderco.lab.ridwanahmed.com"]
       secretName: shiori
   rules:
-    - host: lab.ridwanahmed.com
+    - host: coderco.ridwanahmed.com
       http:
         paths:
           - path: /
