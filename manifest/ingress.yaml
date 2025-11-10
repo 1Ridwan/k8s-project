@@ -6,8 +6,8 @@ metadata:
   annotations:
     cert-manager.io/cluster-issuer: letsencrypt-staging
     # # ingress allows more time for slow endpoints
-    # nginx.ingress.kubernetes.io/proxy-read-timeout: "30" 
-    # nginx.ingress.kubernetes.io/proxy-send-timeout: "30"
+    nginx.ingress.kubernetes.io/proxy-read-timeout: "30" 
+    nginx.ingress.kubernetes.io/proxy-send-timeout: "30"
 spec:
   ingressClassName: nginx
   tls:
