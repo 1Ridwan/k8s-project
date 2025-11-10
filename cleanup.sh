@@ -2,8 +2,6 @@
 
 set -e # exit if any command fails
 
-aws eks --region "$AWS_REGION" update-kubeconfig --name "$CLUSTER_NAME"
-
 # Delete helm releases
 helm uninstall ingress-nginx --namespace ingress-nginx
 helm uninstall cert-manager --namespace cert-manager
