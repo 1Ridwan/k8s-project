@@ -15,7 +15,7 @@ spec:
     spec:
       containers:
         - name: myapp
-          image: "241661649258.dkr.ecr.eu-west-2.amazonaws.com/k8s-ecr:3e942ea28db501a2be8fa85b75b682226b949676" # turn account id into secret using vault
+          image: "241661649258.dkr.ecr.eu-west-2.amazonaws.com/k8s-ecr:c0574ff337ae7a7a6453f69f7b202926e3b65d11" # turn account id into secret using vault
           ports:
             - name: http
               containerPort: 80
