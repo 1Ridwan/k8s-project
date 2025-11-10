@@ -8,7 +8,7 @@ spec:
 
   source:
     repoURL: 'https://github.com/1Ridwan/k8s-project.git'
-    targetRevision: HEAD
+    targetRevision: main
     path: manifest
 
   destination:
