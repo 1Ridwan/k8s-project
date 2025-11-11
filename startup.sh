@@ -1,4 +1,4 @@
-#!bin/bash
+#!/bin/bash
 
 # Run this script after terraform resources are provisioned
 
@@ -6,6 +6,7 @@
 helmfile apply
 
 # Configure ClusterIssuer
+kubectl apply -f staging-issuer.yaml
 kubectl apply -f prod-issuer.yaml
 
 # Create ArgoCD application
