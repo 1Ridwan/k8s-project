@@ -15,12 +15,12 @@ spec:
     spec:
       containers:
         - name: myapp
-          image: "241661649258.dkr.ecr.eu-west-2.amazonaws.com/k8s-ecr:c1bc8fca33927ba91042b57a5941609f738776f4"
+          image: "241661649258.dkr.ecr.eu-west-2.amazonaws.com/k8s-ecr:b33279248983d1e7f31424d79ec9251f211b321e"
           ports:
             - name: http
               containerPort: 80
           startupProbe:
-            httpGet: { path: /, port: http }
+            httpGet: {path: /, port: http}
             periodSeconds: 5
             failureThreshold: 30
           readinessProbe:
