@@ -25,11 +25,12 @@ spec:
             failureThreshold: 30
           readinessProbe:
             httpGet: {path: "/", port: http}
-            initialDelaySeconds: 2
             periodSeconds: 5
+            timeoutSeconds: 5
+            failureThreshold: 3
           livenessProbe:
             httpGet: {path: "/", port: http}
-            initialDelaySeconds: 10
+            initialDelaySeconds: 20
             periodSeconds: 10
-            timeoutSeconds: 1
+            timeoutSeconds: 2
             failureThreshold: 3
