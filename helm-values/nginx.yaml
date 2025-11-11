@@ -1,4 +1,5 @@
 controller:
+  replicas: 2
   service:
     type: LoadBalancer
     annotations:
@@ -6,6 +7,3 @@ controller:
       service.beta.kubernetes.io/aws-load-balancer-nlb-target-type: ip
       service.beta.kubernetes.io/aws-load-balancer-scheme: internet-facing
       external-dns.alpha.kubernetes.io/hostname: lab.ridwanahmed.com
-      # nginx.ingress.kubernetes.io/proxy-read-timeout: "300"
-      # nginx.ingress.kubernetes.io/proxy-send-timeout: "300"
-      # nginx.ingress.kubernetes.io/proxy-connect-timeout: "30"
